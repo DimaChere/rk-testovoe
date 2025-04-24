@@ -1,0 +1,15 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+
+    &__field {
+        display: flex;
+        gap: 5px;
+    }
+    &__submit-button {
+        padding: 15px 0;
+        cursor: pointer;
+    }
+}
