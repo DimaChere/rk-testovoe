@@ -16,9 +16,11 @@ export const FetchForm: FC<FetchFormProps> = ({ handleChangeImageUrl }) => {
     const { cnRoot, cnField, cnSubmitButton } = getClasses();
 
     const [autoRefetch, setAutoRefetch] = useState(false);
-    const { register, handleSubmit } = useForm<Schema>({
+    const { register, watch, handleSubmit } = useForm<Schema>({
         resolver: zodResolver(schema),
     });
+
+    const isSubmitEnabled = watch("enabled");
 
     const {
         error,
@@ -48,7 +50,9 @@ export const FetchForm: FC<FetchFormProps> = ({ handleChangeImageUrl }) => {
     const onSubmit = (formData: Schema) => {
         setAutoRefetch(formData.autoRefetch);
 
-        fetchCat();
+        if (!formData.autoRefetch) {
+            fetchCat();
+        }
     };
 
     return (
@@ -70,7 +74,7 @@ export const FetchForm: FC<FetchFormProps> = ({ handleChangeImageUrl }) => {
             <button
                 type="submit"
                 className={cnSubmitButton}
-                disabled={isPending}
+                disabled={isPending || !isSubmitEnabled}
             >
                 {isPending ? "Loading..." : "Get cat"}
             </button>
