@@ -26,7 +26,6 @@ export const FetchForm: FC<FetchFormProps> = ({ handleChangeImageUrl }) => {
         error,
         mutate: fetchCat,
         isPending,
-        data: mutationData,
     } = useMutation({
         mutationFn: fetchCatImage,
         onSuccess: (data) => {
