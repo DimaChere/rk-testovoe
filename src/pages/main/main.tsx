@@ -1,15 +1,21 @@
+"use client";
 import { CatImage } from "@/components/cat-image/cat-image";
 import { FetchForm } from "@/components/fetch-form/ui/fetch-form";
+import { useState } from "react";
 import { getClasses } from "./styles/get-classes";
 
 export const MainPage = () => {
     const { cnRoot } = getClasses();
-    const catImage = "";
+    const [imageUrl, setImageUrl] = useState<string>("");
+
+    const handleChangeImageUrl = (newUrl: string) => {
+        setImageUrl(newUrl);
+    };
 
     return (
         <main className={cnRoot}>
-            <FetchForm />
-            <CatImage imageUrl={catImage} />
+            <FetchForm handleChangeImageUrl={handleChangeImageUrl} />
+            <CatImage imageUrl={imageUrl} />
         </main>
     );
 };

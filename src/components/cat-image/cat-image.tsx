@@ -1,3 +1,4 @@
+"use client";
 import defaultCatImage from "@/shared/assets/images/cat-image.png";
 import { FC } from "react";
 import { getClasses } from "./styles/get-classes";
