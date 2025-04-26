@@ -1,10 +1,10 @@
 import classNames from "classnames/bind";
-import styles from "./fetch-form.module.scss";
+import styles from "./checkbox-input.module.scss";
 
 const cn = classNames.bind(styles);
 
 export const getClasses = () => {
-    const cnRoot = cn("form");
+    const cnRoot = cn("checkbox-input");
 
     return { cnRoot };
 };

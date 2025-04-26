@@ -1,6 +1,8 @@
 "use client";
 
 import { fetchCatImage } from "@/shared/api/fetch-cat-image";
+import { ButtonPrimary } from "@/shared/ui/button-primary/button-primary";
+import { CheckBoxInput } from "@/shared/ui/checkbox-input/checkbox-input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FC, useEffect, useState } from "react";
@@ -13,7 +15,7 @@ type FetchFormProps = {
 };
 
 export const FetchForm: FC<FetchFormProps> = ({ handleChangeImageUrl }) => {
-    const { cnRoot, cnField, cnSubmitButton } = getClasses();
+    const { cnRoot } = getClasses();
 
     const [autoRefetch, setAutoRefetch] = useState(false);
     const { register, watch, handleSubmit } = useForm<Schema>({
@@ -54,29 +56,22 @@ export const FetchForm: FC<FetchFormProps> = ({ handleChangeImageUrl }) => {
         }
     };
 
+    const buttonText = isPending ? "Loading..." : "Get cat";
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className={cnRoot}>
-            <div className={cnField}>
-                <input {...register("enabled")} id="enabled" type="checkbox" />
-                <label htmlFor="enabled">Enabled</label>
-            </div>
-            <div className={cnField}>
-                <input
-                    {...register("autoRefetch")}
-                    id="autoRefetch"
-                    type="checkbox"
-                />
-                <label htmlFor="autoRefetch">
-                    Auto-refresh every 5 seconds
-                </label>
-            </div>
-            <button
+            <CheckBoxInput labelText="Enabled" {...register("enabled")} />
+            <CheckBoxInput
+                labelText="Auto-refresh every 5 seconds"
+                {...register("autoRefetch")}
+            />
+
+            <ButtonPrimary
                 type="submit"
-                className={cnSubmitButton}
                 disabled={isPending || !isSubmitEnabled}
             >
-                {isPending ? "Loading..." : "Get cat"}
-            </button>
+                {buttonText}
+            </ButtonPrimary>
             {error && <p style={{ color: "red" }}>{error.message}</p>}
         </form>
     );
