@@ -1,13 +1,9 @@
 "use client";
 
-import { fetchCatImage } from "@/shared/api/fetch-cat-image";
 import { ButtonPrimary } from "@/shared/ui/button-primary/button-primary";
 import { CheckBoxInput } from "@/shared/ui/checkbox-input/checkbox-input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { FC, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { Schema, schema } from "../lib/form-schema";
+import { FC } from "react";
+import { useFetchForm } from "../model/use-fetch-form";
 import { getClasses } from "./styles/get-classes";
 
 type FetchFormProps = {
@@ -17,59 +13,21 @@ type FetchFormProps = {
 export const FetchForm: FC<FetchFormProps> = ({ handleChangeImageUrl }) => {
     const { cnRoot } = getClasses();
 
-    const [autoRefetch, setAutoRefetch] = useState(false);
-    const { register, watch, handleSubmit } = useForm<Schema>({
-        resolver: zodResolver(schema),
-    });
-
-    const isSubmitEnabled = watch("enabled");
-
-    const {
-        error,
-        mutate: fetchCat,
-        isPending,
-    } = useMutation({
-        mutationFn: fetchCatImage,
-        onSuccess: (data) => {
-            handleChangeImageUrl(data);
-        },
-    });
-
-    const { data: autoRefetchData } = useQuery({
-        queryKey: ["auto-refetch-cat"],
-        queryFn: () => fetchCatImage(),
-        refetchInterval: autoRefetch ? 5000 : false,
-        enabled: autoRefetch,
-    });
-
-    useEffect(() => {
-        if (autoRefetch && autoRefetchData) {
-            handleChangeImageUrl(autoRefetchData);
-        }
-    }, [autoRefetch, autoRefetchData, handleChangeImageUrl]);
-
-    const onSubmit = (formData: Schema) => {
-        setAutoRefetch(formData.autoRefetch);
-
-        if (!formData.autoRefetch) {
-            fetchCat();
-        }
-    };
+    const { isPending, register, isSubmitEnabled, onSubmit, error } =
+        useFetchForm(handleChangeImageUrl);
 
     const buttonText = isPending ? "Loading..." : "Get cat";
+    const isButtonDisabled = isPending || !isSubmitEnabled;
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className={cnRoot}>
+        <form onSubmit={onSubmit} className={cnRoot}>
             <CheckBoxInput labelText="Enabled" {...register("enabled")} />
             <CheckBoxInput
                 labelText="Auto-refresh every 5 seconds"
                 {...register("autoRefetch")}
             />
 
-            <ButtonPrimary
-                type="submit"
-                disabled={isPending || !isSubmitEnabled}
-            >
+            <ButtonPrimary type="submit" disabled={isButtonDisabled}>
                 {buttonText}
             </ButtonPrimary>
             {error && <p style={{ color: "red" }}>{error.message}</p>}
